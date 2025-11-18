@@ -58,24 +58,19 @@ public static immutable(Stage) stageCreateRoot = Stage("create-root", (StageCont
     /* Confinement requires bind-mounted package cache .. */
     if (context.confinement)
     {
-        auto pkgCache = Mount.bindRW(context.job.hostPaths.pkgCache, guestPkgCachePath);
-        auto err = pkgCache.mount();
-        if (!err.isNull)
-        {
-            error(format!"Failed to mount %s: %s"(pkgCache.target, err.get.toString));
-            return StageReturn.Failure;
-        }
-        context.addMount(pkgCache);
+        // auto pkgCache = Mount.bindRW(context.job.hostPaths.pkgCache, guestPkgCachePath);
+        // auto err = pkgCache.mount();
+        // if (!err.isNull)
+        // {
+        //     error(format!"Failed to mount %s: %s"(pkgCache.target, err.get.toString));
+        //     return StageReturn.Failure;
+        // }
+        // context.addMount(pkgCache);
     }
     else
     {
-        auto recipeMount = Mount.bindRO(context.job.hostPaths.recipe, context.job.unconfinedRecipe);
-        auto err = recipeMount.mount();
-        if (!err.isNull)
-        {
-            error(format!"Failed to mount %s: %s"(recipeMount.target, err.get.toString));
-            return StageReturn.Failure;
-        }
+        auto recipeMount = FileMount.bindRO(context.job.hostPaths.recipe, context.job.unconfinedRecipe);
+        recipeMount.mount();
         context.addMount(recipeMount);
     }
 
